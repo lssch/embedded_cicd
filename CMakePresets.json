@@ -1,22 +1,29 @@
 {
   "version": 6,
-  "cmakeMinimumRequired": { "major": 4, "minor": 0, "patch": 0 },
-
-  "configurePresets": [
+  "cmakeMinimumRequired":
+  {
+    "major": 3,
+    "minor": 28,
+    "patch": 0
+  },
+  "configurePresets":
+  [
     {
-      "name": "Default",
+      "name": "default",
+      "displayName": "Default Config",
       "hidden": true,
+      "description": "Default build using Ninja generator",
       "generator": "Ninja",
-      "description": "Base preset using Ninja",
-      "binaryDir": "${sourceDir}/cmake-build-default",
+      "binaryDir": "${sourceDir}/build/${presetName}",
       "toolchainFile": "$env{PICO_SDK_PATH}/cmake/preload/toolchains/pico_arm_cortex_m0plus_gcc.cmake"
     },
     {
       "name": "Debug",
+      "inherits": "default",
       "displayName": "Debug",
-      "inherits": "Default",
-      "binaryDir": "${sourceDir}/cmake-build-debug",
-      "cacheVariables": {
+      "description": "Debug Configuration",
+      "cacheVariables":
+      {
         "CMAKE_BUILD_TYPE": "Debug",
         "ENABLE_UNIT_TESTING": "OFF"
       }
@@ -24,49 +31,100 @@
     {
       "name": "Test",
       "displayName": "Test",
-      "inherits": "Default",
-      "binaryDir": "${sourceDir}/cmake-build-test",
-      "cacheVariables": {
+      "description": "Configuration with tests enabled",
+      "inherits": "default",
+      "cacheVariables":
+      {
         "CMAKE_BUILD_TYPE": "Debug",
         "ENABLE_UNIT_TESTING": "ON"
       }
     },
     {
       "name": "Release",
+      "inherits": "default",
       "displayName": "Release",
-      "inherits": "Default",
-      "binaryDir": "${sourceDir}/cmake-build-release",
-      "cacheVariables": {
+      "description": "Release Configuration",
+      "cacheVariables":
+      {
         "CMAKE_BUILD_TYPE": "Release",
         "ENABLE_UNIT_TESTING": "OFF"
       }
     }
   ],
-
-  "buildPresets": [
-    { "name": "Default", "hidden": true, "configurePreset": "Default" },
-    { "name": "Debug", "configurePreset": "Debug" },
-    { "name": "Release", "configurePreset": "Release" },
-    { "name": "Test", "configurePreset": "Test" }
-  ],
-
-  "testPresets": [
-    { "name": "Test", "configurePreset": "Test" }
-  ],
-
-  "packagePresets": [
-    { "name": "Default", "configurePreset": "Default", "generators": ["TGZ"] },
-    { "name": "Release", "configurePreset": "Release" }
-  ],
-
-  "workflowPresets": [
+  "buildPresets":
+  [
     {
-      "name": "test-workflow",
-      "description": "Configure, build, and test",
-      "steps": [
-        { "type": "configure", "name": "Test" },
-        { "type": "build", "name": "Test" },
-        { "type": "test", "name": "Test" }
+      "name": "default",
+      "hidden": true,
+      "displayName": "default build",
+      "configurePreset": "default"
+    },
+    {
+      "name": "app-debug",
+      "displayName": "debug build",
+      "configurePreset": "Debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "app-release",
+      "displayName": "release build",
+      "configurePreset": "Release",
+      "configuration": "Release"
+    },
+    {
+      "name": "app-test",
+      "displayName": "test build",
+      "configurePreset": "Test",
+      "configuration": "Test"
+    }
+  ],
+  "testPresets":
+  [
+    {
+      "name": "Test",
+      "description": "test preset",
+      "displayName": "test preset",
+      "configurePreset": "Test"
+    }
+  ],
+  "packagePresets":
+  [
+    {
+      "name": "default",
+      "displayName": "default package preset",
+      "configurePreset": "default",
+      "generators":
+      [
+        "TGZ"
+      ]
+    },
+    {
+      "name": "releasePackage",
+      "description": "",
+      "displayName": "",
+      "configurePreset": "Release"
+    }
+  ],
+  "workflowPresets":
+  [
+    {
+      "name": "workflow",
+      "description": "run test",
+      "displayName": "testing",
+      "steps":
+      [
+        {
+          "type": "configure",
+          "name": "Test"
+        },
+        {
+          "type": "build",
+          "name": "app-test"
+        },
+        {
+          "type": "test",
+          "name": "Test"
+        }
       ]
     }
   ]
