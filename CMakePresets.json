@@ -1,0 +1,73 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 4, "minor": 0, "patch": 0 },
+
+  "configurePresets": [
+    {
+      "name": "Default",
+      "hidden": true,
+      "generator": "Ninja",
+      "description": "Base preset using Ninja",
+      "binaryDir": "${sourceDir}/cmake-build-default",
+      "toolchainFile": "$env{PICO_SDK_PATH}/cmake/preload/toolchains/pico_arm_cortex_m0plus_gcc.cmake"
+    },
+    {
+      "name": "Debug",
+      "displayName": "Debug",
+      "inherits": "Default",
+      "binaryDir": "${sourceDir}/cmake-build-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "ENABLE_UNIT_TESTING": "OFF"
+      }
+    },
+    {
+      "name": "Test",
+      "displayName": "Test",
+      "inherits": "Default",
+      "binaryDir": "${sourceDir}/cmake-build-test",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "ENABLE_UNIT_TESTING": "ON"
+      }
+    },
+    {
+      "name": "Release",
+      "displayName": "Release",
+      "inherits": "Default",
+      "binaryDir": "${sourceDir}/cmake-build-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "ENABLE_UNIT_TESTING": "OFF"
+      }
+    }
+  ],
+
+  "buildPresets": [
+    { "name": "Default", "hidden": true, "configurePreset": "Default" },
+    { "name": "Debug", "configurePreset": "Debug" },
+    { "name": "Release", "configurePreset": "Release" },
+    { "name": "Test", "configurePreset": "Test" }
+  ],
+
+  "testPresets": [
+    { "name": "Test", "configurePreset": "Test" }
+  ],
+
+  "packagePresets": [
+    { "name": "Default", "configurePreset": "Default", "generators": ["TGZ"] },
+    { "name": "Release", "configurePreset": "Release" }
+  ],
+
+  "workflowPresets": [
+    {
+      "name": "test-workflow",
+      "description": "Configure, build, and test",
+      "steps": [
+        { "type": "configure", "name": "Test" },
+        { "type": "build", "name": "Test" },
+        { "type": "test", "name": "Test" }
+      ]
+    }
+  ]
+}
